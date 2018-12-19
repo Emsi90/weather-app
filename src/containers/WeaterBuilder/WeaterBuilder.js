@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import WeatherData from '../../components/WeatherData/WeatherData';
 import Spinner from '../../components/UI/Spinner/Spinner';
+import classes from './WeatherBuilder.css';
 
 const API_KEY = '64bd459b55ce780015ef29df99092a33';
 
@@ -16,33 +17,35 @@ class WaeterBuilder extends Component {
     latitude: '',
     longitude: '',
     locationError: '',
+    bgImage: '',
+    serverError: '',
     isLoading: false
   }
 
-  getWeatherData = () => {
-    let serverError = false;
+  getWeatherData = (e) => {
+    e.preventDefault();
     if(this.state.cityName && this.state.countryCode) {
       this.setState({isLoading: true});
+
+      // Fetch Weather Info
       fetch(`https://api.openweathermap.org/data/2.5/weather?q=${this.state.cityName},${this.state.countryCode}&appid=${API_KEY}&units=metric`)
-        .then(response => {
-          if(response.status === 200) {
-            return response.json();
-          } else {
-            serverError = true;
-          }
-        })
-        .then(data => {
-          this.setState({isLoading: false});
-          if(serverError) {
-            return this.setState({errorMsg: 'Nie ma informacji dla tych danych...', weatherInfo: null});
-          } else {
-            return this.setState({weatherInfo: data, error: false, errorMsg: ''});
-         }
-        })
+        .then(response => this.checkConnection(response))
+        .then(data => this.serverErrorHandler(data))
         .catch(error => error);
+
+        // Fetch Image Background
+        this.getBgImage();
+        
     } else {
       this.setState({error: true});
     }
+  }
+
+  getBgImage = () => {
+    fetch(`https://pixabay.com/api/?key=11033926-5ce039cd01c78ab8f1598fd4f&q=${this.state.cityName}&image_type=photo&per_page=3`)
+    .then(response => response.json())
+    .then(res => this.setState({bgImage: res.hits[1].largeImageURL}))
+    .catch(error => error);
   }
 
   getValue = (e) => {
@@ -50,25 +53,29 @@ class WaeterBuilder extends Component {
   }
 
   getLocationInfo = () => {
-    let serverError = false;
     this.setState({isLoading: true});
     fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${this.state.latitude}&lon=${this.state.longitude}&appid=${API_KEY}&units=metric`)
-      .then(response => {
-        if(response.status === 200) {
-          return response.json();
-        } else {
-          serverError = true;
-        }
-      })
-      .then(data => {
-        this.setState({isLoading: false});
-        if(serverError) {
-          return this.setState({errorMsg: 'Nie ma informacji dla tych danych...', weatherInfo: null});
-        } else {
-          return this.setState({weatherInfo: data, error: false, errorMsg: ''});
-        }
-      })
+      .then(response => this.checkConnection(response))
+      .then(data => this.serverErrorHandler(data))
       .catch(error => error);
+  }
+
+  checkConnection = (response) => {
+    if(response.status === 200) {
+      this.setState({serverError:false});
+      return response.json();
+    } else {
+      this.setState({serverError:true});
+    }
+  }
+
+  serverErrorHandler = (data) => {
+    this.setState({isLoading: false});
+    if(this.state.serverError) {
+      return this.setState({errorMsg: 'There is no information for this data...', weatherInfo: null});
+    } else {
+      return this.setState({weatherInfo: data, error: false, errorMsg: ''});
+    }
   }
 
 
@@ -81,9 +88,8 @@ class WaeterBuilder extends Component {
         longitude
       });
       this.getLocationInfo();
-      console.log(this.state.latitude);
+      this.setState({bgImage: ''});
     } catch (error) {
-      console.log(error);
       this.setState({errorMsg: error.message, weatherInfo: null});
     }
   };
@@ -95,16 +101,20 @@ class WaeterBuilder extends Component {
   };
 
   render() {
+    let containerStyle = {
+      backgroundImage: 'url(' + this.state.bgImage + ')'
+    }
+
     if(this.state.weatherInfo) {
       console.log(this.state.weatherInfo);
     }
     let error = '';
     if(this.state.error) {
-      error = <p>Wpisz poprawne dane!</p>;
+      error = <p className={classes.errorMsg}>Enter correct data!</p>;
     } else if (this.state.errorMsg) {
-      error = <p>{this.state.errorMsg}</p>
+      error = <p className={classes.errorMsg}>{this.state.errorMsg}</p>
     }else if (this.state.locationError) {
-      error = <p>{this.state.locationError}</p>
+      error = <p className={classes.errorMsg}>{this.state.locationError}</p>
     }
 
     let weatherInfo = null;
@@ -114,13 +124,21 @@ class WaeterBuilder extends Component {
       weatherInfo = <WeatherData data={this.state.weatherInfo} error={!this.state.errorMsg}/>
     }
     return (
-      <div>
-        <input type="text" name='cityName' value={this.state.cityName} onChange={this.getValue} />
-        <input type="text" name='countryCode' value={this.state.countryCode} onChange={this.getValue} />
-        <button onClick={this.getWeatherData}>Get Weather</button>
-        <button onClick={this.loadPosition}>Get Your Position</button>
-        {error}
-        {weatherInfo}
+      <div className={classes.WeatherContainer}>
+        <div className={classes.WeatherBgImage} style={containerStyle}></div>
+        <div className={classes.WeatherForm}>
+          <form onSubmit={this.getWeatherData}>
+            <input type="text" name='cityName' value={this.state.cityName} onChange={this.getValue} placeholder="City..."/>
+            <input type="text" name='countryCode' value={this.state.countryCode} onChange={this.getValue} placeholder="City Code..."/>
+            <button type="submit">Get Weather</button>
+          </form>
+          <span className={classes.FormText}>or</span>
+          <button onClick={this.loadPosition}>Get Your Position</button>
+          {error}
+        </div>
+        <div className={classes.WeatherBox}>
+          {weatherInfo}
+        </div>
       </div>
     );
   }
