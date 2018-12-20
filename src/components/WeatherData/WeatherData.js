@@ -18,7 +18,7 @@ const weatherData = (props) => {
           </div>
         </div>
         <div className={classes.WeatherContent__info}>
-          <img src={'/images/' + props.data.weather[0].icon + '.png'} className={classes.WeatherContent__icon} alt={props.data.weather[0].description}/>
+          <img src={'./images/' + props.data.weather[0].icon + '.png'} className={classes.WeatherContent__icon} alt={props.data.weather[0].description}/>
           <div>
             <p className={classes.WeatherContent__temp}>Temp. <span>{props.data.main.temp} °C</span></p>
             <p>{props.data.weather[0].description}</p>
@@ -27,7 +27,7 @@ const weatherData = (props) => {
       </div>
     );
   } else {
-    content = <p className={classes.WeatherContent__startText}>Complete the data to display...</p>
+    // content = <p className={classes.WeatherContent__startText}>Complete the data to display...</p>
   }
   return content;
 }

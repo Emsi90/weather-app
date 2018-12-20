@@ -36,15 +36,27 @@
 }
 
 .WeatherForm {
-  position: fixed;
+  /* position: fixed;
   top: 40px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%); */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 2;
+}
+
+.WeatherForm form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.WeatherForm .InputGroup {
+  margin-bottom: 30px;
+
 }
 
 .WeatherForm .FormText {
@@ -56,11 +68,19 @@
   font-family: 'Raleway', sans-serif;
   padding: 6px 10px;
   font-size: 18px;
-  border: 1px solid #89b3ff;
+  /* border: 1px solid #89b3ff; */
+  border: none;
+  font-weight: 500;
   margin-right: 10px;
-  color: rgb(22, 22, 22);
-	background: hsla(0,0%,100%,.1) border-box;
+  color: #FFF;
+  text-shadow: 0 1px 1px rgba(34, 34, 34, 0.3);
+	background: hsla(0,0%,100%,.3) border-box;
   border-radius: 5px;
+}
+
+.WeatherForm input:focus {
+  color: #FFF;
+  background: rgb(40, 164, 251);
 }
 
 .WeatherForm input::placeholder {
@@ -70,18 +90,20 @@
 .WeatherForm button {
   font-family: 'Raleway', sans-serif;
   background-image: linear-gradient(to top, #1e3c72 0%, #1e3c72 1%, #2a5298 100%);
+  /* background-color: #4e4dab; */
   border-radius: 5px;
   color: #d6e3e6;
   font-size: 18px;
-  font-weight: 400;
+  font-weight: 500;
   border: none;
   cursor: pointer;
   padding: 6px 30px;
-  transition: .5s all;
+  /* transition: .5s all; */
 }
 
 .WeatherForm button:hover {
   background: #1e3c72;
+  /* background-color: #2b2a7a; */
   box-shadow: .2em .2em 1em rgba(1, 12, 20, 0.3);
 }
 
@@ -116,4 +138,25 @@
   font-weight: 500;
   background-color: #de6464;
   border-radius: 5px;
+}
+
+.AnotherBtn {
+  margin-top: 30px;
+  position: relative;
+  font-family: 'Raleway', sans-serif;
+  background-image: linear-gradient(to top, #1e3c72 0%, #1e3c72 1%, #2a5298 100%);
+  border-radius: 5px;
+  color: #d6e3e6;
+  font-size: 18px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  padding: 6px 30px;
+  transition: .5s all;
+  z-index: 2;
+}
+
+.AnotherBtn:hover {
+  background-color: #1e3c72;
+  box-shadow: .2em .2em 1em rgba(1, 12, 20, 0.3);
 }

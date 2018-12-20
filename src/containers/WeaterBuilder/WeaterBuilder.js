@@ -19,12 +19,15 @@ class WaeterBuilder extends Component {
     locationError: '',
     bgImage: '',
     serverError: '',
+    showForm: true,
     isLoading: false
   }
 
   getWeatherData = (e) => {
     e.preventDefault();
+    
     if(this.state.cityName && this.state.countryCode) {
+      this.showFormHandler();
       this.setState({isLoading: true});
 
       // Fetch Weather Info
@@ -72,6 +75,7 @@ class WaeterBuilder extends Component {
   serverErrorHandler = (data) => {
     this.setState({isLoading: false});
     if(this.state.serverError) {
+      this.showFormHandler();
       return this.setState({errorMsg: 'There is no information for this data...', weatherInfo: null});
     } else {
       return this.setState({weatherInfo: data, error: false, errorMsg: ''});
@@ -81,6 +85,7 @@ class WaeterBuilder extends Component {
 
   loadPosition = async () => {
     try {
+      this.showFormHandler();
       const position = await this.getCurrentPosition();
       const { latitude, longitude } = position.coords;
       this.setState({
@@ -100,6 +105,17 @@ class WaeterBuilder extends Component {
     });
   };
 
+  showFormHandler = () => {
+    this.setState({showForm: !this.state.showForm})
+  }
+
+  anotherWeatherHandler = () => {
+    this.setState({
+      showForm: !this.state.showForm,
+      weatherInfo: null
+    })
+  }
+
   render() {
     let containerStyle = {
       backgroundImage: 'url(' + this.state.bgImage + ')'
@@ -108,6 +124,7 @@ class WaeterBuilder extends Component {
     if(this.state.weatherInfo) {
       console.log(this.state.weatherInfo);
     }
+
     let error = '';
     if(this.state.error) {
       error = <p className={classes.errorMsg}>Enter correct data!</p>;
@@ -123,22 +140,38 @@ class WaeterBuilder extends Component {
     } else {
       weatherInfo = <WeatherData data={this.state.weatherInfo} error={!this.state.errorMsg}/>
     }
+
+    let form = null;
+    if(this.state.showForm) {
+      form = (
+        <div className={classes.WeatherForm}>
+          <form onSubmit={this.getWeatherData}>
+            <div className={classes.InputGroup}>
+              <input type="text" name='cityName' value={this.state.cityName} onChange={this.getValue} placeholder="City..."/>
+              <input type="text" name='countryCode' value={this.state.countryCode} onChange={this.getValue} placeholder="City Code..."/>
+            </div>
+            <button type="submit">Get Weather</button>
+          </form>
+          <span className={classes.FormText}>or just...</span>
+          <button onClick={this.loadPosition}>Give Your Position</button>
+          {error}
+        </div>
+      );
+    }
+
+    let anotherWeather = null;
+    if(!this.state.showForm) {
+      anotherWeather = <button className={classes.AnotherBtn} onClick={this.anotherWeatherHandler}>Another Weather</button>
+    }
+
     return (
       <div className={classes.WeatherContainer}>
         <div className={classes.WeatherBgImage} style={containerStyle}></div>
-        <div className={classes.WeatherForm}>
-          <form onSubmit={this.getWeatherData}>
-            <input type="text" name='cityName' value={this.state.cityName} onChange={this.getValue} placeholder="City..."/>
-            <input type="text" name='countryCode' value={this.state.countryCode} onChange={this.getValue} placeholder="City Code..."/>
-            <button type="submit">Get Weather</button>
-          </form>
-          <span className={classes.FormText}>or</span>
-          <button onClick={this.loadPosition}>Get Your Position</button>
-          {error}
-        </div>
         <div className={classes.WeatherBox}>
+          {form}
           {weatherInfo}
         </div>
+        {anotherWeather}
       </div>
     );
   }
