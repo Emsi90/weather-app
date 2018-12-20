@@ -56,7 +56,15 @@
 
 .WeatherForm .InputGroup {
   margin-bottom: 30px;
+}
 
+@media(max-width: 576px) {
+  .WeatherForm .InputGroup {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .WeatherForm .FormText {
@@ -76,6 +84,12 @@
   text-shadow: 0 1px 1px rgba(34, 34, 34, 0.3);
 	background: hsla(0,0%,100%,.3) border-box;
   border-radius: 5px;
+}
+
+@media(max-width: 576px) {
+  .WeatherForm input:first-of-type {
+    margin-bottom: 15px;
+  }
 }
 
 .WeatherForm input:focus {
@@ -125,7 +139,9 @@
 
 @media(max-width: 576px) {
   .WeatherBox {
-    min-width: auto;
+    padding: 40px 30px;
+    min-width: 250px;
+    margin: 0 20px;
   }
 }
 
