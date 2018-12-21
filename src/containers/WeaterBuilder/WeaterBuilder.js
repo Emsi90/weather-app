@@ -148,7 +148,7 @@ class WaeterBuilder extends Component {
           <form onSubmit={this.getWeatherData}>
             <div className={classes.InputGroup}>
               <input type="text" name='cityName' value={this.state.cityName} onChange={this.getValue} placeholder="City..."/>
-              <input type="text" name='countryCode' value={this.state.countryCode} onChange={this.getValue} placeholder="City Code..."/>
+              <input type="text" name='countryCode' value={this.state.countryCode} onChange={this.getValue} placeholder="Country Code..."/>
             </div>
             <button type="submit">Get Weather</button>
           </form>
